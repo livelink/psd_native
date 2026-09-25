@@ -1,11 +1,10 @@
 #include "psd_native_ext.h"
 
 static VALUE psd_class;
-static VALUE logger;
 
 void Init_psd_native() {
+  rb_gc_register_address(&psd_class);
   psd_class = rb_const_get(rb_cObject, rb_intern("PSD"));
-  logger = rb_funcall(psd_class, rb_intern("logger"), 0);
 
   VALUE PSDNative = rb_define_module("PSDNative");
   VALUE ImageMode = rb_define_module_under(PSDNative, "ImageMode");
@@ -81,5 +80,6 @@ void Init_psd_native() {
 }
 
 void psd_logger(char* level, char* message) {
+  VALUE logger = rb_funcall(psd_class, rb_intern("logger"), 0);
   rb_funcall(logger, rb_intern(level), 1, rb_str_new2(message));
 }
